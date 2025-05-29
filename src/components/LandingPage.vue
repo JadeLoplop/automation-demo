@@ -1,6 +1,49 @@
 <template>
     <div class="mecha-container">
       <canvas ref="canvasRef" class="three-canvas"></canvas>
+  
+      <!-- Sketchfab embed mech iframe -->
+      <div class="sketchfab-embed-wrapper">
+        <iframe
+          title="Mecha Game Project"
+          frameborder="0"
+          allowfullscreen
+          mozallowfullscreen="true"
+          webkitallowfullscreen="true"
+          allow="autoplay; fullscreen; xr-spatial-tracking"
+          xr-spatial-tracking
+          execution-while-out-of-viewport
+          execution-while-not-rendered
+          web-share
+          src="https://sketchfab.com/models/1715d53a409643ebba477b5f25573804/embed"
+        ></iframe>
+        <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
+          <a
+            href="https://sketchfab.com/3d-models/mecha-game-project-1715d53a409643ebba477b5f25573804"
+            target="_blank"
+            rel="nofollow"
+            style="font-weight: bold; color: #1CAAD9;"
+            >Mecha Game Project</a
+          >
+          by
+          <a
+            href="https://sketchfab.com/polyflow"
+            target="_blank"
+            rel="nofollow"
+            style="font-weight: bold; color: #1CAAD9;"
+            >polyflow</a
+          >
+          on
+          <a
+            href="https://sketchfab.com"
+            target="_blank"
+            rel="nofollow"
+            style="font-weight: bold; color: #1CAAD9;"
+            >Sketchfab</a
+          >
+        </p>
+      </div>
+  
       <div class="overlay">
         <h1>Automated Mecha Systems</h1>
         <p>Deploy, test, and evolve with cybernetic precision.</p>
@@ -11,7 +54,6 @@
   <script setup>
   import { ref, onMounted } from 'vue'
   import * as THREE from 'three'
-  import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
   
   const canvasRef = ref(null)
@@ -37,28 +79,10 @@
     controls.enableDamping = true
     controls.autoRotate = true
   
-    const clock = new THREE.Clock()
-    let mixer = null
-  
-    const loader = new GLTFLoader()
-    loader.load('/models/mech.glb', (gltf) => {
-      const model = gltf.scene
-      model.scale.set(1, 1, 1)
-      model.position.set(0, -1, 0)
-      scene.add(model)
-  
-      if (gltf.animations.length) {
-        mixer = new THREE.AnimationMixer(model)
-        gltf.animations.forEach((clip) => {
-          mixer.clipAction(clip).play()
-        })
-      }
-    })
+    // No GLB loader here anymore
   
     const animate = () => {
       requestAnimationFrame(animate)
-      const delta = clock.getDelta()
-      if (mixer) mixer.update(delta)
       controls.update()
       renderer.render(scene, camera)
     }
@@ -66,7 +90,6 @@
     animate()
   })
   </script>
-  
   
   <style scoped>
   .mecha-container {
@@ -77,23 +100,52 @@
     height: 100vh;
     overflow: hidden;
     z-index: 0;
+    background: #0a0a1f;
   }
   
   .three-canvas {
     width: 100%;
     height: 100%;
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
   }
   
-  .overlay {
+  /* Make iframe fill and sit on top of the canvas */
+  .sketchfab-embed-wrapper {
     position: absolute;
     top: 50%;
     left: 50%;
+    width: 80vw;
+    height: 60vh;
+    max-width: 900px;
+    max-height: 600px;
     transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: auto;
+  }
+  
+  .sketchfab-embed-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #00ffffaa;
+  }
+  
+  /* Overlay text stays on top */
+  .overlay {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
     text-align: center;
     z-index: 10;
     pointer-events: none;
     color: white;
+    user-select: none;
   }
   
   .overlay h1 {
